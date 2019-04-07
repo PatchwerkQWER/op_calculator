@@ -20,7 +20,7 @@
 
 	<div class="display" data-bind="calculator.current__text">0</div>
 	<div class="keyboard">
-		<div class="key bg-smoke" data-id="C">AC</div>
+		<div class="key bg-smoke" data-id="C">C</div>
 		<div class="key bg-smoke" data-id="_">+/-</div>
 		<div class="key bg-smoke" data-id="%">%</div>
 		<div class="key opbg" data-id="/">÷</div>
@@ -68,6 +68,9 @@
 				case 13:
 					EXEC('main/keyboard', '=');
 					break;
+				case 27:
+					EXEC('main/keyboard', 'C');
+					break;
 				default:
 					EXEC('main/keyboard', e.key);
 					break;
@@ -102,9 +105,12 @@
 						tmp = (calculator.prev / cur);
 						break;
 				}
+
 				calculator.operator = '';
-				calculator.current = tmp.floor(5) + '';
+				calculator.current = (tmp.floor(5) + '').replace('.', ',');
 				calculator.prev = tmp;
+				OP.info2(calculator.current);
+				OP.play('done');
 				UPD('calculator.current');
 			};
 
@@ -152,6 +158,12 @@
 						}
 						is = true;
 						key = ',';
+						break;
+					case '%':
+						calculator.current = ((calculator.current.parseFloat() / 100).floor(5) + '').replace('.', ',');
+						UPD('calculator.current');
+						OP.info2(calculator.current);
+						OP.play('done');
 						break;
 					case '+':
 					case '-':
