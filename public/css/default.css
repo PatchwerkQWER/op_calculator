@@ -5,7 +5,7 @@ body { background: white; }
 
 .display { height: 70px; font-size: 40px; line-height: 70px; padding: 0 15px; text-align: right; }
 .keyboard { font-size: 18px; }
-.keyboard div { width: 25%; float: left; text-align: center; font-size: 100%; border-left: 1px solid #E0E0E0; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+.keyboard div { width: 25%; float: left; text-align: center; font-size: 100%; border-left: 1px solid #E0E0E0; font-weight: bold; cursor: pointer; transition: all 0.2s; user-select: none; }
 .keyboard div:first-child { border-left: 0; }
 .keyboard .opbg { color: white; }
 .keyboard { border-bottom: 1px solid #E0E0E0; }
