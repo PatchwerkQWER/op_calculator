@@ -1,0 +1,25 @@
+/*auto*/
+
+html,body { overflow: hidden; margin: 0; padding: 0; color: #303030; }
+body { background: white; }
+
+.display { height: 70px; font-size: 40px; line-height: 70px; padding: 0 15px; text-align: right; }
+.keyboard { font-size: 18px; }
+.keyboard div { width: 25%; float: left; text-align: center; font-size: 100%; border-left: 1px solid #E0E0E0; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+.keyboard div:first-child { border-left: 0; }
+.keyboard .opbg { color: white; }
+.keyboard { border-bottom: 1px solid #E0E0E0; }
+.keyboard .zero { width: 50%; }
+.bg-smoke { background-color: #F0F0F0; }
+.keyboard .animate { opacity: 0.8; }
+.keyboard .animate.nobg { background-color: #F0F0F0; }
+
+.ui-dark .bg-smoke { background-color: #303030; }
+.ui-dark .keyboard div { border-left-color: #404040; }
+.ui-dark .keyboard { border-bottom-color: #404040; }
+.ui-dark .display { border-bottom-color: #404040; color: white; }
+.ui-dark .keyboard .animate.nobg { background-color: #505050; color: white; }
+
+@media(max-width: 768px) {
+	.keyboard { font-size: 20px; }
+}

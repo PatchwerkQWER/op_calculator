@@ -1,0 +1,7 @@
+name                  : Calculator
+author                : Total Avengers
+version               : 1.0.0
+cdn                   : //cdn.componentator.com
+
+allow_custom_titles   : true
+allow_ssc_validation  : true

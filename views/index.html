@@ -1,0 +1,209 @@
+@{layout('')}
+@{title(config.name)}
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=11" />
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="robots" content="all,follow" />
+	<link href="@{'%cdn'}/spa.min@17.css" rel="stylesheet" />
+	<script src="@{'%cdn'}/spa.min@17.js"></script>
+	<script src="@{'%cdn'}/openplatform.min@4.js"></script>
+	@{import('meta', 'head', 'default.js', 'default.css', 'favicon.ico')}
+</head>
+<body data-bind="common.ready__invisible:!value" class="invisible@{if user.darkmode} ui-dark@{fi}">
+
+	@{json(user, 'userdata')}
+
+	<div class="display" data-bind="calculator.current__text">0</div>
+	<div class="keyboard">
+		<div class="key bg-smoke" data-id="C">AC</div>
+		<div class="key bg-smoke" data-id="_">+/-</div>
+		<div class="key bg-smoke" data-id="%">%</div>
+		<div class="key opbg" data-id="/">÷</div>
+	</div>
+	<div class="keyboard">
+		<div class="key nobg" data-id="7">7</div>
+		<div class="key nobg" data-id="8">8</div>
+		<div class="key nobg" data-id="9">9</div>
+		<div class="key opbg" data-id="*">×</div>
+	</div>
+	<div class="keyboard">
+		<div class="key nobg" data-id="4">4</div>
+		<div class="key nobg" data-id="5">5</div>
+		<div class="key nobg" data-id="6">6</div>
+		<div class="key opbg" data-id="-">−</div>
+	</div>
+	<div class="keyboard">
+		<div class="key nobg" data-id="1">1</div>
+		<div class="key nobg" data-id="2">2</div>
+		<div class="key nobg" data-id="3">3</div>
+		<div class="key opbg" data-id="+">+</div>
+	</div>
+	<div class="keyboard">
+		<div class="key nobg zero" data-id="0">0</div>
+		<div class="key nobg" data-id=",">,</div>
+		<div class="key opbg" data-id="=">=</div>
+	</div>
+
+	<script>
+
+		var calculator = {};
+		calculator.current = '0';
+		calculator.prev = 0;
+		calculator.clear = false;
+		calculator.operator = '';
+
+		$(window).on('keydown', function(e) {
+			switch (e.which) {
+				case 8:
+					calculator.current = calculator.current.substring(0, calculator.current.length - 1);
+					if (calculator.current === '')
+						calculator.current = '0';
+					UPD('calculator.current');
+					break;
+				case 13:
+					EXEC('main/keyboard', '=');
+					break;
+				default:
+					EXEC('main/keyboard', e.key);
+					break;
+			}
+		});
+
+		PLUGIN('main', function(exports) {
+
+			$(document).on('click', '.key', function(e) {
+				exports.keyboard($(this).attrd('id'));
+			});
+
+			exports.calculate = function() {
+
+				if (!calculator.operator)
+					return;
+
+				var cur = calculator.current.parseFloat();
+				var tmp = 0;
+
+				switch (calculator.operator) {
+					case '+':
+						tmp = (calculator.prev + cur);
+						break;
+					case '-':
+						tmp = (calculator.prev - cur);
+						break;
+					case '*':
+						tmp = (calculator.prev * cur);
+						break;
+					case '/':
+						tmp = (calculator.prev / cur);
+						break;
+				}
+				calculator.operator = '';
+				calculator.current = tmp.floor(5) + '';
+				calculator.prev = tmp;
+				UPD('calculator.current');
+			};
+
+			exports.keyboard = function(key) {
+				var is = false;
+				switch (key) {
+					case 'C':
+						calculator.current = '0';
+						calculator.prev = 0;
+						calculator.operator = '';
+						UPD('calculator.current');
+						is = true;
+						break;
+					case '_':
+						if (calculator.current.substring(0, 1) === '-')
+							calculator.current = calculator.current.substring(1);
+						else
+							calculator.current = '-' + calculator.current;
+						UPD('calculator.current');
+						is = true;
+						break;
+					case '1':
+					case '2':
+					case '3':
+					case '4':
+					case '5':
+					case '6':
+					case '7':
+					case '8':
+					case '9':
+					case '0':
+						if (calculator.current === '0' || calculator.clear) {
+							calculator.current = '';
+							calculator.clear = false;
+						}
+						calculator.current += key;
+						UPD('calculator.current');
+						is = true;
+						break;
+					case ',':
+					case '.':
+						if (calculator.current.indexOf(',') === -1) {
+							calculator.current += ',';
+							UPD('calculator.current');
+						}
+						is = true;
+						key = ',';
+						break;
+					case '+':
+					case '-':
+					case '*':
+					case '/':
+						if (calculator.operator) {
+							exports.calculate();
+						} else {
+							calculator.prev = calculator.current.parseFloat();
+							UPD('calculator.current');
+						}
+						calculator.operator = key;
+						calculator.clear = true;
+						is = true;
+						break;
+					case '=':
+						exports.calculate();
+						calculator.operator = '';
+						calculator.clear = false;
+						is = true;
+						break;
+				};
+
+				if (is) {
+					var el = $('.key[data-id="{0}"]'.format(key));
+					el.aclass('animate');
+					setTimeout(function() {
+						el.rclass('animate');
+					}, 300, el);
+				}
+
+			};
+		});
+
+		MAKE('user', function(obj) {
+			COPY(PARSE('#userdata'), obj);
+		});
+
+		OP.appearance();
+
+		OP.on('appearance', function(obj) {
+			CSS('.ui-modal-footer button{background-color:{0}}'.format(obj.colorscheme), 'ui');
+		});
+
+		OP.on('resize', function(size) {
+			var p = size.height.inc('20%');
+			var h = size.height - p;
+			h = Math.ceil(h / 5);
+			CSS('.display{height:{0}px;line-height:{0}px}.keyboard{height:{1}px}.keyboard div{height:{2}px;line-height:{2}px}'.format(p, h, h - 1), 'size');
+		});
+
+	</script>
+
+</body>
+</html>

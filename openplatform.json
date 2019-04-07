@@ -1,0 +1,22 @@
+{
+	"name": "Calculator",
+	"description": "A simple calculator",
+	"version": "1.0.0",
+	"icon": "calculator",
+	"url": "YOUR_URL_ADDRESS",
+	"author": "Total Avengers",
+	"email": "info@totalavengers.com",
+	"roles": [],
+	"width": 350,
+	"height": 400,
+	"resize": false,
+	"mobilemenu": false,
+	"allownotifications": false,
+	"allowreadmeta": false,
+	"allowreadprofile": 1,
+	"allowreadusers": 0,
+	"allowreadapps": 0,
+	"serververify": true,
+	"responsive": true,
+	"origin": []
+}
